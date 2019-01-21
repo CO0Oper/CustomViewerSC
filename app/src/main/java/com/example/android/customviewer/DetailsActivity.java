@@ -32,7 +32,7 @@ public class DetailsActivity extends Activity {
         mTextView.setText("Id:" + collection_id );
 
         OkHttpClient client = new OkHttpClient();
-        Request request = new Request().Builder.url(urlBuilder(collection_id)).build();
+       // Request request = new Request().Builder.url(urlBuilder(collection_id)).build();
 
 
 
