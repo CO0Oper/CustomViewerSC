@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/collec_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:textSize="24sp"
+        android:fontFamily="sans-serif-condensed"
+        android:text="test"
+        android:textColor="@color/TitleColor"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="center"/>
+
+</LinearLayout>

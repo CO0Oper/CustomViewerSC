@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">CustomViewer</string>
+    <string name="title_activity_collection_list">CollectionListActivity</string>
+    <string name="no_internet">No internet connection.</string>
+    <string name="title_activity_details">DetailsActivity</string>
+
+    <string name="detail_price">Price</string>
+    <string name="detail_inventory">Inventory</string>
+    <string name="detail_vendor">Vendor</string>
+    <string name="detail_tag">Tags</string>
+    <string name="detail_body">Body</string>
+
+</resources>
