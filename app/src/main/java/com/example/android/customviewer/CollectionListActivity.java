@@ -1,6 +1,7 @@
 package com.example.android.customviewer;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -28,6 +29,8 @@ public class CollectionListActivity extends AppCompatActivity{
 
     private View loadingIndicator;
 
+    private ListView collectionList;
+
     private ArrayList<Collections> collec = new ArrayList<>();
 
     @Override
@@ -35,49 +38,14 @@ public class CollectionListActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection_list);
 
-        final ListView collectionList = findViewById(R.id.collec_list);
+        collectionList = findViewById(R.id.collec_list);
 
         mTextView = findViewById(R.id.collec_text);
 
+        collectionList.setEmptyView(mTextView);
         //loadingIndicator = findViewById(R.id.loading_indicator);
 
-        collectionList.setEmptyView(mTextView);
-
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder().url(REST_API).build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-//                loadingIndicator.setVisibility(View.GONE);
-//
-//                mTextView.setText(R.string.no_internet);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    final String myResponse = response.body().string();
-                    CollectionListActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //collec = QueryItems.fetchData(myResponse);
-                            if(myResponse!=null) {
-                                QueryItems qq = new QueryItems();
-                                collec = qq.fetchData(myResponse);
-                                mAdapter = new ListAdapter(getBaseContext(), collec);
-                                collectionList.setAdapter(mAdapter);
-//                                long ll = collec.get(0).getcId();
-//                                mTextView.setText("ID: " + ll);
-
-                            }
-
-                        }
-                    });
-                }//end of if
-            }//end of onResponse.
-        });//end of request
+            queryRequest(REST_API);
 
 //        ConnectivityManager connectManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 //
@@ -97,19 +65,73 @@ public class CollectionListActivity extends AppCompatActivity{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Collections collec = mAdapter.getItem(position);
 
-                String collc_id = collec.getcId().toString();
+                String collc_id = collec.getcId();
 
-//                mTextView.setText("id: " + collc_id);
+                QueryItems q = new QueryItems();
+
+                queryRequest(q.urlBuilder(1, collc_id));
+
+                String Image = collec.getImage();
+
 
                 Intent detailsIntent = new Intent(CollectionListActivity.this, DetailsActivity.class);
 
                 detailsIntent.putExtra("collc_id", collc_id);
+
+                detailsIntent.putExtra("Image", Image);
 
                 startActivity(detailsIntent);
             }
         });
 
     }
+
+
+//    private class httpRequest extends AsyncTask<URL, Integer, Long> {
+//        protected ArrayList<Collections> doInBackground(URL... urls) {
+//
+//            OkHttpClient client = new OkHttpClient();
+//
+//            Request request = new Request.Builder().url(REST_API).build();
+//
+//            String myResponse = "";
+//
+//            Response response = null;
+//            try {
+//                response = client.newCall(request).execute();
+//                myResponse = response.body().string();
+//
+//            } catch (IOException e) {
+//
+//            }
+//
+//            if (myResponse != null) {
+//                QueryItems qq = new QueryItems();
+//                collec = qq.fetchData(myResponse);
+////                mAdapter = new ListAdapter(getBaseContext(), collec);
+////                collectionList.setAdapter(mAdapter);
+////                                long ll = collec.get(0).getcId();
+////                                mTextView.setText("ID: " + ll);
+//
+//            }
+//
+//
+//            return collec;
+//            }
+//
+//
+//
+//
+//
+//        protected void onProgressUpdate(Integer... progress) {
+//
+//        }
+//
+//        protected void onPostExecute(Long result) {
+//
+//        }
+//    }
+
 //
 //    public static List<Collections> fetchData(String requestUrl) {
 //
@@ -119,6 +141,48 @@ public class CollectionListActivity extends AppCompatActivity{
 //        return collec;
 //    }
 
+    private void queryRequest(String url){
+
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder().url(url).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+//                loadingIndicator.setVisibility(View.GONE);
+//
+//                mTextView.setText(R.string.no_internet);
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    final String myResponse = response.body().string();
+                    CollectionListActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //collec = QueryItems.fetchData(myResponse);
+                            if(myResponse!=null) {
+                                QueryItems qq = new QueryItems();
+                                    collec = qq.fetchData(myResponse);
+                                    mAdapter = new ListAdapter(getBaseContext(), collec);
+                                    collectionList.setAdapter(mAdapter);
+
+
+                                response.close();
+//                                long ll = collec.get(0).getcId();
+//                                mTextView.setText("ID: " + ll);
+
+                            }
+
+                        }
+                    });
+                }//end of if
+            }//end of onResponse.
+        });//end of request
+    }
 
 
 }

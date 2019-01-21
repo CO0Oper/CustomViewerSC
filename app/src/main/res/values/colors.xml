@@ -7,4 +7,6 @@
     <color name="TitleColor">#263238</color>
 
     <color name="temp_photo">#9e9e9e</color>
+
+    <color name="card_background">#607D8B</color>
 </resources>
